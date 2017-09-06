@@ -12,46 +12,42 @@ namespace IdiomExercise
         [TestMethod]
         public void AddingCustomerShouldNotTakeMoreThan50Milliseconds()
         {
-            CustomerBook customerBook = new CustomerBook();
+            CustomerBook aCustomerBook = new CustomerBook();
             CheckInAndCheckOutCustomersForTesting someTest = new CheckInAndCheckOutCustomersForTesting();
 
             Chronometer chronometer = new Chronometer();
-            chronometer.CustomerActionShouldNotTakeMoreThanSomeMilliseconds(customerBook, someTest.AddJonhLennonToCustomerBook, 50);
+            chronometer.CustomerActionShouldNotTakeMoreThanSomeMilliseconds(aCustomerBook, someTest.AddJonhLennonToCustomerBook, 50);
         }
 
         [TestMethod]
         public void RemovingCustomerShouldNotTakeMoreThan100Milliseconds()
         {
-            CustomerBook customerBook = new CustomerBook();
+            CustomerBook aCustomerBook = new CustomerBook();
             CheckInAndCheckOutCustomersForTesting someTest = new CheckInAndCheckOutCustomersForTesting();
-            someTest.AddPaulMcCartneyToCustomerBook(customerBook);
+            someTest.AddPaulMcCartneyToCustomerBook(aCustomerBook);
 
             Chronometer chronometer = new Chronometer();
-            chronometer.CustomerActionShouldNotTakeMoreThanSomeMilliseconds(customerBook, someTest.RemovePaulMcCartneyFromCustomerBook, 100);
+            chronometer.CustomerActionShouldNotTakeMoreThanSomeMilliseconds(aCustomerBook, someTest.RemovePaulMcCartneyFromCustomerBook, 100);
         }
 
         [TestMethod]
         public void CanNotAddACustomerWithEmptyName()
         {
-            CustomerBook customerBook = new CustomerBook();
+            CustomerBook aCustomerBook = new CustomerBook();
+            CheckInAndCheckOutCustomersForTesting someTest = new CheckInAndCheckOutCustomersForTesting();
             CatchExceptionsForTesting catchingATest = new CatchExceptionsForTesting();
-            Action operation = () => customerBook.addCustomerNamed("");
-            Action<Exception> catchOperation = (Exception exceptionThrown) => catchingATest.CatchAddingACustomerWithEmptyName(customerBook, exceptionThrown);
-
-            ExceptionTest.TryCatch(operation, catchOperation);
+            
+            CustomerBookTestingExceptionCatcher.TryCustomerBookActionForTesting(aCustomerBook, someTest.AddNoNamedToCustomerBook, catchingATest.CatchAddingACustomerWithEmptyName);
         }
 
         [TestMethod]
         public void CanNotRemoveNotAddedCustomer()
         {
-            CustomerBook customerBook = new CustomerBook();
+            CustomerBook aCustomerBook = new CustomerBook();
+            CheckInAndCheckOutCustomersForTesting someTest = new CheckInAndCheckOutCustomersForTesting();
             CatchExceptionsForTesting catchingATest = new CatchExceptionsForTesting();
-            Action operation = () => customerBook.removeCustomerNamed("John Lennon");
-            Action<Exception> catchOperation = (Exception exceptionThrown) => catchingATest.CatchRemovingNotAddedCustomer(customerBook, exceptionThrown);
 
-            ExceptionTest.TryCatch(operation, catchOperation);
+            CustomerBookTestingExceptionCatcher.TryCustomerBookActionForTesting(aCustomerBook, someTest.RemoveJonhLennonFromCustomerBook, catchingATest.CatchRemovingNotAddedCustomer);
         }
-
-        
     }
 }

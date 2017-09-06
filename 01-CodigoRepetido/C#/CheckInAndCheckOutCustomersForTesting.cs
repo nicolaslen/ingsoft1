@@ -7,22 +7,33 @@ namespace IdiomExercise
 {
     public class CheckInAndCheckOutCustomersForTesting
     {
-        public void AddPaulMcCartneyToCustomerBook(CustomerBook customerBook)
+        public void AddPaulMcCartneyToCustomerBook(CustomerBook aCustomerBookForTesting)
         {
             String paulMcCartney = "Paul McCartney";
-            customerBook.addCustomerNamed(paulMcCartney);
+            aCustomerBookForTesting.addCustomerNamed(paulMcCartney);
         }
 
-        public void AddJonhLennonToCustomerBook(CustomerBook customerBook)
+        public void AddJonhLennonToCustomerBook(CustomerBook aCustomerBookForTesting)
         {
             String johnLennon = "John Lennon";
-            customerBook.addCustomerNamed(johnLennon);
+            aCustomerBookForTesting.addCustomerNamed(johnLennon);
         }
 
-        public void RemovePaulMcCartneyFromCustomerBook(CustomerBook customerBook)
+        public void RemovePaulMcCartneyFromCustomerBook(CustomerBook aCustomerBookForTesting)
         {
             String paulMcCartney = "Paul McCartney";
-            customerBook.removeCustomerNamed(paulMcCartney);
+            aCustomerBookForTesting.removeCustomerNamed(paulMcCartney);
+        }
+
+        public void RemoveJonhLennonFromCustomerBook(CustomerBook aCustomerBookForTesting)
+        {
+            String johnLennon = "John Lennon";
+            aCustomerBookForTesting.removeCustomerNamed(johnLennon);
+        }
+
+        public void AddNoNamedToCustomerBook(CustomerBook aCustomerBookForTesting)
+        {
+            aCustomerBookForTesting.addCustomerNamed("");
         }
     }
 }

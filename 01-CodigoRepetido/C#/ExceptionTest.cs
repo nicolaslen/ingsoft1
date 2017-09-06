@@ -8,20 +8,20 @@ namespace IdiomExercise
 {
     public class ExceptionTest
     {
-        public static void TryCatch(Action _try, Action<Exception> _catch)
+        public static void TryCatchForTesting(Action actionToTry, Action<Exception> catchAction)
         {
             try
             {
-                _try();
+                actionToTry();
                 Assert.Fail();
             }
             catch (InvalidOperationException e)
             {
-                _catch(e);
+                catchAction(e);
             }
             catch (Exception e)
             {
-                _catch(e);
+                catchAction(e);
             }
         }
 
