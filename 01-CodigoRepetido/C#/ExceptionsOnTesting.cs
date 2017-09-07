@@ -6,9 +6,9 @@ using System.Text;
 
 namespace IdiomExercise
 {
-    public class ExceptionTest
+    public class ExceptionsOnTesting
     {
-        public static void TryCatchForTesting(Action actionToTry, Action<Exception> catchAction)
+        public static void TryCatchForTesting(Action actionToTry, Action<Exception> actionWhenExceptionIsThrown)
         {
             try
             {
@@ -17,17 +17,12 @@ namespace IdiomExercise
             }
             catch (InvalidOperationException e)
             {
-                catchAction(e);
+                actionWhenExceptionIsThrown(e);
             }
             catch (Exception e)
             {
-                catchAction(e);
+                actionWhenExceptionIsThrown(e);
             }
-        }
-
-        public static void ThrowCorrectException(Exception exceptionThrown, String exceptionMessageExpected)
-        {
-            Assert.AreEqual(exceptionThrown.Message, exceptionMessageExpected);
         }
     }
 }

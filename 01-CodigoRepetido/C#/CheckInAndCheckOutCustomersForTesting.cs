@@ -7,33 +7,33 @@ namespace IdiomExercise
 {
     public class CheckInAndCheckOutCustomersForTesting
     {
-        public void AddPaulMcCartneyToCustomerBook(CustomerBook aCustomerBookForTesting)
+        public void AddPaulMcCartneyToCustomerBook(CustomerBook customerBookForTesting)
         {
             String paulMcCartney = "Paul McCartney";
-            aCustomerBookForTesting.addCustomerNamed(paulMcCartney);
+            customerBookForTesting.addCustomerNamed(paulMcCartney);
         }
 
-        public void AddJonhLennonToCustomerBook(CustomerBook aCustomerBookForTesting)
+        public void AddJonhLennonToCustomerBook(CustomerBook customerBookForTesting)
         {
             String johnLennon = "John Lennon";
-            aCustomerBookForTesting.addCustomerNamed(johnLennon);
+            customerBookForTesting.addCustomerNamed(johnLennon);
         }
 
-        public void RemovePaulMcCartneyFromCustomerBook(CustomerBook aCustomerBookForTesting)
+        public void RemovePaulMcCartneyFromCustomerBook(CustomerBook customerBookForTesting)
         {
             String paulMcCartney = "Paul McCartney";
-            aCustomerBookForTesting.removeCustomerNamed(paulMcCartney);
+            customerBookForTesting.removeCustomerNamed(paulMcCartney);
         }
 
-        public void RemoveJonhLennonFromCustomerBook(CustomerBook aCustomerBookForTesting)
+        public void RemoveJonhLennonFromCustomerBook(CustomerBook customerBookForTesting)
         {
             String johnLennon = "John Lennon";
-            aCustomerBookForTesting.removeCustomerNamed(johnLennon);
+            customerBookForTesting.removeCustomerNamed(johnLennon);
         }
 
-        public void AddNoNamedToCustomerBook(CustomerBook aCustomerBookForTesting)
+        public void AddNoNamedToCustomerBook(CustomerBook customerBookForTesting)
         {
-            aCustomerBookForTesting.addCustomerNamed("");
+            customerBookForTesting.addCustomerNamed("");
         }
     }
 }

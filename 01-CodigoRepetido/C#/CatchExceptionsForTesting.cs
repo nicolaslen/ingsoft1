@@ -6,18 +6,28 @@ using System.Text;
 
 namespace IdiomExercise
 {
-    public class CatchExceptionsForTesting : ExceptionTest
+    public class CatchExceptionsForTesting : ExceptionsOnTesting
     {
         public void CatchAddingACustomerWithEmptyName(CustomerBook customerBook, Exception exceptionThrown)
         {
             ThrowCorrectException(exceptionThrown, CustomerBook.CUSTOMER_NAME_EMPTY);
-            Assert.IsTrue(customerBook.isEmpty());
+            CheckIfCustomerBookIsEmpty(customerBook);
         }
 
         public void CatchRemovingNotAddedCustomer(CustomerBook customerBook, Exception exceptionThrown)
         {
             ThrowCorrectException(exceptionThrown, CustomerBook.INVALID_CUSTOMER_NAME);
-            Assert.AreEqual(0, customerBook.numberOfCustomers());
+            CheckIfCustomerBookIsEmpty(customerBook);
+        }
+        
+        public void ThrowCorrectException(Exception exceptionThrown, String exceptionMessageExpected)
+        {
+            Assert.AreEqual(exceptionThrown.Message, exceptionMessageExpected);
+        }
+
+        public void CheckIfCustomerBookIsEmpty(CustomerBook customerBook)
+        {
+            Assert.IsTrue(customerBook.isEmpty());
         }
     }
 }

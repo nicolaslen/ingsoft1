@@ -11,7 +11,7 @@ namespace IdiomExercise
         public void CustomerActionShouldNotTakeMoreThanSomeMilliseconds(CustomerBook customerBook, Action<CustomerBook> customberBookAction, int maximumMillisecondsOfCustomerAction)
         {
             DateTime timeBeforeAction = DateTime.Now;
-            customberBookAction.Invoke(customerBook);
+            customberBookAction(customerBook);
             DateTime timeAfterAction = DateTime.Now;
             Assert.IsTrue(timeAfterAction.Subtract(timeBeforeAction).TotalMilliseconds < maximumMillisecondsOfCustomerAction);
         }

@@ -2,12 +2,12 @@
 
 namespace IdiomExercise
 {
-    public class CustomerBookTestingExceptionCatcher : ExceptionTest
+    public class CustomerBookTestingExceptionCatcher : ExceptionsOnTesting
     {
-        public static void TryCustomerBookActionForTesting(CustomerBook customerBook, Action<CustomerBook> customerBookActionToTry, Action<CustomerBook, Exception> customerBookActionWhenCatchException)
+        public static void TryCustomerBookActionForTesting(CustomerBook customerBook, Action<CustomerBook> customerBookActionToTry, Action<CustomerBook, Exception> customerBookActionWhenExceptionIsThrown)
         {
             Action actionToTry = () => customerBookActionToTry(customerBook);
-            Action<Exception> catchAction = (Exception e) => customerBookActionWhenCatchException.Invoke(customerBook, e);
+            Action<Exception> catchAction = (Exception e) => customerBookActionWhenExceptionIsThrown(customerBook, e);
             TryCatchForTesting(actionToTry, catchAction);
         }
     }
