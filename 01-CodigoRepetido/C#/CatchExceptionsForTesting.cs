@@ -6,7 +6,7 @@ using System.Text;
 
 namespace IdiomExercise
 {
-    public class CatchExceptionsForTesting : ExceptionsOnTesting
+    public class CatchExceptionsForTesting
     {
         public void CatchAddingACustomerWithEmptyName(CustomerBook customerBook, Exception exceptionThrown)
         {
