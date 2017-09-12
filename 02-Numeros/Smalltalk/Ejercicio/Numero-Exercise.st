@@ -282,35 +282,67 @@ initalizeWith: aValue
 	value := aValue! !
 
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:28:11'!
-* aMultiplier 
-	(aMultiplier isKindOf: Entero) ifTrue: [^self class with: value * aMultiplier integerValue].
-	(aMultiplier isKindOf: Fraccion) ifTrue: [^Fraccion with: (self * aMultiplier numerator) over: aMultiplier denominator].
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:46:10'!
+* aMultiplier
+
+	^aMultiplier multiplicarConEntero: self
 	! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/7/2017 21:23:42'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:23:01'!
 + anAdder 
 	
-	(anAdder isKindOf: Entero) ifTrue: [ ^self class with: value + anAdder integerValue ].
-	(anAdder isKindOf: Fraccion) ifTrue: [ ^Fraccion with: (self value * anAdder denominator + anAdder numerator) over: anAdder denominator ].
-	
-	
-! !
+	^anAdder sumarConEntero: self
+		! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:27:44'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:52:52'!
 / aDivisor 
-	(aDivisor isKindOf: Entero) ifTrue: [^Fraccion with: self over: aDivisor].
-	(aDivisor isKindOf: Fraccion) ifTrue: [^Fraccion with: (self * aDivisor denominator) over: aDivisor numerator].! !
+
+	^aDivisor dividirConEntero: self
+! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 21:55'!
 // aDivisor 
 	
 	^self class with: value // aDivisor integerValue! !
 
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 20:33:22'!
+dividirConEntero: anEntero
+	^Fraccion with: anEntero over: self! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 20:37:51'!
+dividirConFraccion: aFraccion 
+
+
+	^Fraccion with: aFraccion numerator over: (self * aFraccion denominator)! !
+
 !Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 21:00'!
 greatestCommonDivisorWith: anEntero 
 	
 	^self class with: (value gcd: anEntero integerValue)! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:37:24'!
+multiplicarConEntero: anEntero 
+
+
+	^self class with: value * anEntero integerValue! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:38:33'!
+multiplicarConFraccion: aFraccion 
+
+
+	^Fraccion with: (self * aFraccion numerator) over: aFraccion denominator! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:19:49'!
+sumarConEntero: anEntero 
+
+
+	^self class with: value + anEntero integerValue! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:21:23'!
+sumarConFraccion: anFraccion 
+
+	
+	^Fraccion with: (self value * anFraccion denominator + anFraccion numerator) over: anFraccion denominator! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -367,29 +399,22 @@ hash
 	^(numerator hash / denominator hash) hash! !
 
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:30:02'!
-* aMultiplier 
-	(aMultiplier isKindOf: Fraccion) ifTrue: [^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)].
-	(aMultiplier isKindOf: Entero) ifTrue: [^(self numerator * aMultiplier value) / (self denominator)]
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:45:59'!
+* aMultiplier
+
+	^aMultiplier multiplicarConFraccion: self
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'JL 9/7/2017 21:53:20'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:29:59'!
 + anAdder 
 	
-	| newNumerator newDenominator |
-	
-	(anAdder isKindOf: Fraccion) ifTrue: [
-	newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).
-	newDenominator := denominator * anAdder denominator. ].
-	(anAdder isKindOf: Entero) ifTrue: [
-	newNumerator := numerator + (anAdder * denominator).
-	newDenominator := denominator. ].
-	^newNumerator / newDenominator.! !
+	^anAdder sumarConFraccion: self! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:31:35'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'JL 9/12/2017 18:52:19'!
 / aDivisor 
-	(aDivisor isKindOf: Fraccion) ifTrue: [^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)].
-	(aDivisor isKindOf: Entero) ifTrue: [^(self numerator) / (self denominator * aDivisor value)]! !
+
+	^aDivisor dividirConFraccion: self
+! !
 
 
 !Fraccion methodsFor: 'accessing' stamp: 'HernanWilkinson 5/7/2016 21:56'!
@@ -397,10 +422,43 @@ denominator
 
 	^ denominator! !
 
+!Fraccion methodsFor: 'accessing' stamp: 'JL 9/12/2017 19:41:39'!
+dividirConEntero: anEntero
+
+	^(self denominator * anEntero value) / (self numerator)! !
+
+!Fraccion methodsFor: 'accessing' stamp: 'JL 9/12/2017 19:45:22'!
+dividirConFraccion: aFraccion
+
+
+	^(denominator * aFraccion numerator) / (numerator * aFraccion denominator)! !
+
+!Fraccion methodsFor: 'accessing' stamp: 'JL 9/12/2017 18:41:56'!
+multiplicarConEntero: anEntero
+
+	^(self numerator * anEntero value) / (self denominator)! !
+
+!Fraccion methodsFor: 'accessing' stamp: 'JL 9/12/2017 18:42:29'!
+multiplicarConFraccion: aFraccion
+
+
+	^(numerator * aFraccion numerator) / (denominator * aFraccion denominator)! !
+
 !Fraccion methodsFor: 'accessing' stamp: 'HernanWilkinson 5/7/2016 21:56'!
 numerator
 
 	^ numerator! !
+
+!Fraccion methodsFor: 'accessing' stamp: 'JL 9/12/2017 18:27:32'!
+sumarConEntero: anEntero
+
+	^(numerator + (anEntero * denominator)) / denominator.! !
+
+!Fraccion methodsFor: 'accessing' stamp: 'JL 9/12/2017 18:33:40'!
+sumarConFraccion: aFraccion
+
+
+	^((numerator * aFraccion denominator) + (denominator * aFraccion numerator)) / (denominator * aFraccion denominator)! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
