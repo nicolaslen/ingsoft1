@@ -282,10 +282,10 @@ initalizeWith: aValue
 	value := aValue! !
 
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:13'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:28:11'!
 * aMultiplier 
-	
-	^self class with: value * aMultiplier integerValue
+	(aMultiplier isKindOf: Entero) ifTrue: [^self class with: value * aMultiplier integerValue].
+	(aMultiplier isKindOf: Fraccion) ifTrue: [^Fraccion with: (self * aMultiplier numerator) over: aMultiplier denominator].
 	! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'JL 9/7/2017 21:23:42'!
@@ -297,10 +297,10 @@ initalizeWith: aValue
 	
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:27:44'!
 / aDivisor 
-	
-	^Fraccion with: self over: aDivisor! !
+	(aDivisor isKindOf: Entero) ifTrue: [^Fraccion with: self over: aDivisor].
+	(aDivisor isKindOf: Fraccion) ifTrue: [^Fraccion with: (self * aDivisor denominator) over: aDivisor numerator].! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 21:55'!
 // aDivisor 
@@ -367,10 +367,10 @@ hash
 	^(numerator hash / denominator hash) hash! !
 
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:30:02'!
 * aMultiplier 
-	
-	^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)
+	(aMultiplier isKindOf: Fraccion) ifTrue: [^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)].
+	(aMultiplier isKindOf: Entero) ifTrue: [^(self numerator * aMultiplier value) / (self denominator)]
 	! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'JL 9/7/2017 21:53:20'!
@@ -386,10 +386,10 @@ hash
 	newDenominator := denominator. ].
 	^newNumerator / newDenominator.! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'NL 9/12/2017 15:31:35'!
 / aDivisor 
-	
-	^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)! !
+	(aDivisor isKindOf: Fraccion) ifTrue: [^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)].
+	(aDivisor isKindOf: Entero) ifTrue: [^(self numerator) / (self denominator * aDivisor value)]! !
 
 
 !Fraccion methodsFor: 'accessing' stamp: 'HernanWilkinson 5/7/2016 21:56'!
