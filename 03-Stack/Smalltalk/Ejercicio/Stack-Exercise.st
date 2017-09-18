@@ -139,44 +139,54 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #OOStack category: #'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: 'stack'
+	instanceVariableNames: 'firstElement size'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 20:05:33'!
-emptyCheck
-
-	stack isEmpty ifTrue: [self error: (OOStack stackEmptyErrorDescription)].! !
-
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 19:24:15'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 15:10:54'!
 initialize
+	firstElement := OOStackNullElement new.
+	size := 0.
+	^self.! !
 
-	stack := OrderedCollection new.! !
-
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 19:41:16'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:36:03'!
 isEmpty
+	
+	^ firstElement isEmpty.! !
 
-	^stack isEmpty.! !
-
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 21:43:41'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:37:37'!
 pop
-	self subclassResponsibility.! !
+	| element |
+	
+	element := self topElement.
+	firstElement := element next.
+	size := size - 1.
+	^element value.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 19:43:45'!
-push: elementToAdd
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:41:12'!
+push: anElement
+	|element|
+	
+	element := OOStackNotNullElement init: anElement withNext: self topElement.
+	firstElement := element.
+	size := size + 1.
+	^self.! !
 
-	stack addFirst: elementToAdd.! !
-
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 20:07:26'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:10:39'!
 size
+	
+	^size.! !
 
-	^stack size.! !
-
-!OOStack methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 20:05:44'!
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:35:46'!
 top
-	self emptyCheck.
-	^stack at: 1.! !
+	
+	^firstElement value.! !
+
+!OOStack methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:37:08'!
+topElement
+	
+	^firstElement.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -184,50 +194,97 @@ top
 OOStack class
 	instanceVariableNames: ''!
 
+!OOStack class methodsFor: 'error descriptions' stamp: 'JL 9/18/2017 14:28:06'!
+new
+	
+	^super new initialize! !
+
 !OOStack class methodsFor: 'error descriptions' stamp: 'HernanWilkinson 5/7/2012 11:51'!
 stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
 
-
-!OOStack class methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 19:23:38'!
-new
-	
-	^super new initialize.
-	
- ! !
-
 
-!classDefinition: #OOStackNoVacio category: #'Stack-Exercise'!
-OOStack subclass: #OOStackNoVacio
+!classDefinition: #OOStackElement category: #'Stack-Exercise'!
+Object subclass: #OOStackElement
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackNoVacio methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 21:44:58'!
+!OOStackElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 15:11:39'!
+isEmpty
+	
+	^self subclassResponsibility.! !
+
+!OOStackElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:46:09'!
+next
+	 ^self subclassResponsibility.! !
+
+!OOStackElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 16:19:57'!
+value
+	 ^self subclassResponsibility.! !
+
+
+!classDefinition: #OOStackNotNullElement category: #'Stack-Exercise'!
+OOStackElement subclass: #OOStackNotNullElement
+	instanceVariableNames: 'value nextStackElement'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackNotNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 16:49:14'!
+init: anElement withNextElement: stackElement
+
+	value := anElement.
+	nextStackElement := stackElement.! !
+
+!OOStackNotNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 15:43:30'!
 isEmpty
 	
 	^false.! !
 
-!OOStackNoVacio methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 21:42:14'!
-pop
-	^stack removeFirst.! !
+!OOStackNotNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 16:18:53'!
+next
+
+	^nextStackElement.! !
+
+!OOStackNotNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 16:20:13'!
+value
+	
+	^value.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackNotNullElement class' category: #'Stack-Exercise'!
+OOStackNotNullElement class
+	instanceVariableNames: ''!
+
+!OOStackNotNullElement class methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 16:59:41'!
+init: anElement withNext: nextStackElement
+	|element|
+	element := super new.
+	^element init: anElement withNextElement: nextStackElement.
+! !
 
 
-!classDefinition: #OOStackVacio category: #'Stack-Exercise'!
-OOStack subclass: #OOStackVacio
-	instanceVariableNames: ''
+!classDefinition: #OOStackNullElement category: #'Stack-Exercise'!
+OOStackElement subclass: #OOStackNullElement
+	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackVacio methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 21:45:13'!
+!OOStackNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 15:43:36'!
 isEmpty
-
+	
 	^true.! !
 
-!OOStackVacio methodsFor: 'as yet unclassified' stamp: 'NL 9/17/2017 21:42:57'!
-pop
+!OOStackNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:42:50'!
+next
+	
+	self error: OOStack stackEmptyErrorDescription .! !
 
-	self error: (OOStack stackEmptyErrorDescription)! !
+!OOStackNullElement methodsFor: 'as yet unclassified' stamp: 'JL 9/18/2017 17:45:36'!
+value
+	self error: OOStack stackEmptyErrorDescription.! !
