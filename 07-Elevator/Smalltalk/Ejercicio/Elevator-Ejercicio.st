@@ -460,10 +460,10 @@ closingDoor
 
 	cabinDoor closingDoor! !
 
-!ElevatorCabin methodsFor: 'as yet unclassified' stamp: 'JL 10/11/2017 20:00:53'!
+!ElevatorCabin methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 17:01:55'!
 initialize
 
-	state := (ElevatorCabinStateStopped new).
+	self stoppedCabin.
 	cabinDoor := (ElevatorDoor new).
 	currentFloor := 0! !
 
@@ -502,10 +502,10 @@ movingCabin
 
 	state := ElevatorCabinStateMoving new.! !
 
-!ElevatorCabin methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 16:26:31'!
+!ElevatorCabin methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 16:58:12'!
 openCabinDoor
 
-	^state openCabinDoorFor: self! !
+	state openCabinDoorFor: self! !
 
 !ElevatorCabin methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 16:27:35'!
 openCabinDoorWhenMoving! !
@@ -561,9 +561,9 @@ isMoving
 isStopped
 	^ self subclassResponsibility.! !
 
-!ElevatorCabinState methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 16:26:48'!
+!ElevatorCabinState methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 16:57:56'!
 openCabinDoorFor: aCabin
-	^ self subclassResponsibility.! !
+	self subclassResponsibility.! !
 
 
 !classDefinition: #ElevatorCabinStateMoving category: #'Elevator-Ejercicio'!
@@ -870,10 +870,10 @@ closingDoor
 
 	state := ElevatorDoorStateClosing new! !
 
-!ElevatorDoor methodsFor: 'as yet unclassified' stamp: 'JL 10/11/2017 19:27:01'!
+!ElevatorDoor methodsFor: 'as yet unclassified' stamp: 'JL 10/12/2017 17:00:56'!
 initialize
 
-	state := ElevatorDoorStateOpened new! !
+	self openedDoor! !
 
 !ElevatorDoor methodsFor: 'as yet unclassified' stamp: 'JL 10/11/2017 18:34:37'!
 isClosed
