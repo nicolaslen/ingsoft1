@@ -605,6 +605,11 @@ currentFloorNumber
 
 	^currentFloorNumber! !
 
+!Cabin methodsFor: 'floor' stamp: 'JL 10/18/2017 19:31:13'!
+notify: anState
+
+	^elevator notify: anState! !
+
 !Cabin methodsFor: 'floor' stamp: 'HAW 10/4/2017 10:30:50'!
 reachedFloorToStop
 	
@@ -708,11 +713,6 @@ door
 
 	^door! !
 
-!Cabin methodsFor: 'door' stamp: 'JL 10/18/2017 15:55:16'!
-elevator
-
-	^elevator! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Cabin class' category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
@@ -745,13 +745,6 @@ initializeOf: aCabin
 	motor := Motor new.
 	state :=CabinDoorOpenedState for: self! !
 
-
-!CabinDoor methodsFor: 'actions' stamp: 'JL 10/18/2017 15:55:46'!
-cabin
-
-	^cabin
-	
-	! !
 
 !CabinDoor methodsFor: 'actions' stamp: 'HAW 10/4/2017 10:21:35'!
 close
@@ -839,6 +832,11 @@ closedWhenOpened
 closedWhenOpening
 	
 	self signalSensorDesincronized ! !
+
+!CabinDoor methodsFor: 'sensor activation - private' stamp: 'JL 10/18/2017 19:31:34'!
+notify: anState
+	
+	cabin notify: anState.! !
 
 
 !CabinDoor methodsFor: 'testing' stamp: 'HAW 10/3/2017 16:22:23'!
@@ -934,11 +932,11 @@ Object subclass: #CabinDoorState
 	poolDictionaries: ''
 	category: 'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 
-!CabinDoorState methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:27:48'!
+!CabinDoorState methodsFor: 'initialization' stamp: 'JL 10/18/2017 19:31:51'!
 initializeFor: aCabinDoor
 
 	door := aCabinDoor.
-	((door cabin) elevator) changed: self! !
+	door notify: self! !
 
 !CabinDoorState methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:12:59'!
 notifyTo: anObserver
@@ -976,7 +974,6 @@ isOpening
 open
 
 	self subclassResponsibility ! !
-
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1033,7 +1030,6 @@ open
 	
 	^door openWhenClosed! !
 
-
 
 !classDefinition: #CabinDoorClosingState category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 CabinDoorState subclass: #CabinDoorClosingState
@@ -1077,7 +1073,6 @@ notifyTo: anObserver
 open
 	
 	^door openWhenClosing! !
-
 
 
 !classDefinition: #CabinDoorOpenedState category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
@@ -1123,7 +1118,6 @@ open
 	
 	^door openWhenOpened! !
 
-
 
 !classDefinition: #CabinDoorOpeningState category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 CabinDoorState subclass: #CabinDoorOpeningState
@@ -1168,7 +1162,6 @@ open
 	
 	^door openWhenOpening! !
 
-
 
 !classDefinition: #CabinState category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 Object subclass: #CabinState
@@ -1177,11 +1170,11 @@ Object subclass: #CabinState
 	poolDictionaries: ''
 	category: 'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 
-!CabinState methodsFor: 'initialization' stamp: 'JL 10/18/2017 16:14:01'!
+!CabinState methodsFor: 'initialization' stamp: 'JL 10/18/2017 19:30:36'!
 initializeFor: aCabin
 
 	cabin := aCabin. 
-	(cabin elevator) changed: self! !
+	cabin notify: self.! !
 
 
 !CabinState methodsFor: 'testing' stamp: 'HAW 10/3/2017 20:28:43'!
@@ -1211,7 +1204,6 @@ notifyTo: anObserver
 closeDoor
 
 	self subclassResponsibility ! !
-
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1256,7 +1248,6 @@ isStopped
 isWaitingForPeople
 
 	^false! !
-
 
 
 !classDefinition: #CabinStoppedState category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
@@ -1329,16 +1320,22 @@ notifyTo: anObserver
 
 !classDefinition: #Elevator category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 Object subclass: #Elevator
-	instanceVariableNames: 'cabin state floorsToGo'
+	instanceVariableNames: 'cabin state floorsToGo subject'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 
-!Elevator methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:14:02'!
+!Elevator methodsFor: 'initialization' stamp: 'JL 10/18/2017 19:05:14'!
 initialize
+	subject := Subject new.
 	cabin _ Cabin of: self.
 	floorsToGo _ SortedCollection new.
 	state _ ElevatorIdleState for: self.! !
+
+!Elevator methodsFor: 'initialization' stamp: 'JL 10/18/2017 19:05:48'!
+notify: anState
+	
+	subject notify: anState.! !
 
 
 !Elevator methodsFor: 'state change' stamp: 'HAW 10/3/2017 16:56:07'!
@@ -1391,6 +1388,11 @@ startWorkingGoingTo: aFloorNumber
 	cabin startClosingDoor.! !
 
 
+!Elevator methodsFor: 'testing' stamp: 'JL 10/18/2017 19:06:52'!
+addObserver: anObserver
+	
+	subject addObserver: anObserver.! !
+
 !Elevator methodsFor: 'testing' stamp: 'HAW 10/3/2017 16:55:48'!
 hasFloorsToGo
 	
@@ -1417,7 +1419,6 @@ cabin
 	
 	^cabin! !
 
-
 
 !classDefinition: #ElevatorConsole category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 Object subclass: #ElevatorConsole
@@ -1426,11 +1427,11 @@ Object subclass: #ElevatorConsole
 	poolDictionaries: ''
 	category: 'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 
-!ElevatorConsole methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:16:40'!
+!ElevatorConsole methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:46:30'!
 initializeOf: anElevator
 	
 	stream := WriteStream on: String new.
-	anElevator addDependent: self.! !
+	anElevator addObserver: self.! !
 
 
 !ElevatorConsole methodsFor: 'accessing' stamp: 'HAW 10/4/2017 12:41:14'!
@@ -1596,10 +1597,10 @@ Object subclass: #ElevatorStatusView
 	poolDictionaries: ''
 	category: 'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
 
-!ElevatorStatusView methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:17:22'!
+!ElevatorStatusView methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:46:42'!
 initializeOf: anElevator
 	
-	anElevator addDependent: self.! !
+	anElevator addObserver: self.! !
 
 !ElevatorStatusView methodsFor: 'initialization' stamp: 'JL 10/18/2017 18:13:51'!
 update: anState 
@@ -1746,3 +1747,31 @@ Motor class
 motorMustBeStoppedBeforeMovingAgainErrorMessage
 
 	^'El motor debe estar parado antes de que se empiece a mover'! !
+
+
+!classDefinition: #Subject category: #'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
+Object subclass: #Subject
+	instanceVariableNames: 'observers'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ElevatorConsole-Simple with Cabin-Door-Motor-Ejercicio'!
+
+!Subject methodsFor: 'as yet unclassified' stamp: 'JL 10/18/2017 18:44:41'!
+addObserver: anObserver
+
+	observers add: anObserver! !
+
+!Subject methodsFor: 'as yet unclassified' stamp: 'JL 10/18/2017 18:45:53'!
+initialize
+
+	observers := OrderedCollection new.! !
+
+!Subject methodsFor: 'as yet unclassified' stamp: 'JL 10/18/2017 18:58:28'!
+notify: anState
+
+	observers do: [:anObserver | anObserver update: anState]! !
+
+!Subject methodsFor: 'as yet unclassified' stamp: 'JL 10/18/2017 18:45:38'!
+removeObserver: anObserver
+
+	observers remove: anObserver! !
