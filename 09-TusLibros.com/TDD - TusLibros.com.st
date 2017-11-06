@@ -1,3 +1,227 @@
+!classDefinition: #CartInterfaceTest category: #'TDD - TusLibros.com'!
+TestCase subclass: #CartInterfaceTest
+	instanceVariableNames: 'provider cartInterface'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TDD - TusLibros.com'!
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:26:36'!
+setUp
+	provider _ TestInstancesFactory new.
+	
+	cartInterface := 
+		CartInterface 
+			withClients: provider createSomeUsers 
+			catalog: provider createCatalogWithSomeProducts 
+			cashier: (provider createCashierWithMP: self)
+! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 17:17:25'!
+test01CanNotCreateCartWithInvalidUser
+
+	| aPassword anInvalidUserName aCartInterface |
+	anInvalidUserName := provider createInvalidUserName.
+	aPassword := provider createPassword.
+	
+	aCartInterface := cartInterface.
+	
+	self should: [ aCartInterface createCartForClient: anInvalidUserName password: aPassword ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface canNotCreateCartWithInvalidUser ].
+	
+! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 17:17:31'!
+test02CanNotCreateCartWithInvalidPassword
+
+
+	| anUserName aCartInterface anInvalidPassword |
+	anUserName := provider createUserName.
+	anInvalidPassword := provider createInvalidPassword.
+	
+	aCartInterface := cartInterface.
+	
+	self should: [ aCartInterface createCartForClient: anUserName password: anInvalidPassword ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface canNotCreateCartWithInvalidPassword ].
+	
+! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:07:23'!
+test03CreateCartStartsEmpty
+	
+	| aCartInterface anUserName aPassword aCart aCartId |
+	
+	anUserName := provider createUserName.
+	aPassword := provider createPassword.
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: anUserName password: aPassword.
+
+	aCart := aCartInterface cartWithId: aCartId.
+	
+	self assert: aCart isEmpty! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:21:39'!
+test04CanNotGetACartWithInvalidId
+	
+	| aCartInterface aCartId |
+	
+	aCartInterface := cartInterface.
+	aCartId := provider createInvalidCartId.
+
+	self should: [	aCartInterface cartWithId: aCartId. ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface invalidId ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:47:02'!
+test05CanNotAddItemToNotCreatedCart
+	
+	| aCartInterface anInvalidCartId |
+	
+	aCartInterface := cartInterface.
+	
+	anInvalidCartId := provider createInvalidCartId.
+
+	self should: [ aCartInterface addToCartWithId: anInvalidCartId item: provider createProduct quantity: 1 ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface invalidId ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:46:03'!
+test06CanNotAddItemAbsentInCatalog
+	
+	| aCartInterface aCartId |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	
+	self should: [ aCartInterface addToCartWithId: aCartId item: provider createItemAbsentInTheCatalog quantity: 1 ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface itemAbsentInCatalog ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:48:13'!
+test07CanNotAddItemWithNegativeQuantity
+	
+	| aCartInterface aCartId |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	
+	self should: [ aCartInterface addToCartWithId: aCartId item: provider createProduct quantity: -1 ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface invalidQuantity.! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:17:08'!
+test08CartWithItemIsNotEmpty
+	
+	| aCartInterface aCartId aCart |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	
+	aCartInterface addToCartWithId: aCartId item: provider createProduct quantity: 1.
+	
+	aCart := aCartInterface cartWithId: aCartId.
+	
+	self deny: aCart isEmpty
+	
+	
+	! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:34:51'!
+test09CanNotListCartWithInvalidId
+	
+	| aCartId aCartInterface |
+	aCartInterface := cartInterface.
+	aCartId := provider createInvalidCartId.
+
+	self should: [	aCartInterface listCartWithId: aCartId. ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface invalidId ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:56:24'!
+test10ListCartReturnsQuantityOfItem
+	
+	| aCartInterface aCartId cartItems |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	
+	aCartInterface addToCartWithId: aCartId item: provider createProduct quantity: 10.
+	aCartInterface addToCartWithId: aCartId item: provider createAnotherProduct quantity: 15.
+	aCartInterface addToCartWithId: aCartId item: provider createOneMoreProduct quantity: 20.
+	
+	cartItems := aCartInterface listCartWithId: aCartId.
+	
+	self assert: (cartItems at: provider createProduct) = 10.
+	self assert: (cartItems at: provider createAnotherProduct) = 15.
+	self assert: (cartItems at: provider createOneMoreProduct) = 20.
+	
+	! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:12:44'!
+test11CanNotCheckoutACartWithInvalidId
+	
+	| aCartId aCartInterface aCreditCard |
+	aCartInterface := cartInterface.
+	aCartId := provider createInvalidCartId.
+	aCreditCard := provider createCreditCard.
+
+	self should: [	aCartInterface checkOutCartWithId: aCartId creditCard: aCreditCard ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface invalidId ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:14:41'!
+test12CanNotCheckoutAnEmptyCart
+	
+	| aCartId aCartInterface aCreditCard |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	aCreditCard := provider createCreditCard.
+
+	self should: [	aCartInterface checkOutCartWithId: aCartId creditCard: aCreditCard ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface canNotCheckoutAnEmptyCart ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:35:51'!
+test13CanNotCheckoutWithAnExpiredCreditCard
+	
+	| aCartId aCartInterface anExpiredCreditCard |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	anExpiredCreditCard := provider createExpiredCreditCard.
+
+	self should: [	aCartInterface checkOutCartWithId: aCartId creditCard: anExpiredCreditCard ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface canNotCheckoutAnEmptyCart ].! !
+
+!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:27:25'!
+test14CanNotCheckoutWithACreditCardWithoutFounds
+	
+	| aCartId aCartInterface aCreditCard |
+	
+	aCartInterface := cartInterface.
+	aCartId := aCartInterface createCartForClient: provider createUserName password: provider createPassword .
+	aCreditCard := provider createCreditCard.
+
+	self should: [	aCartInterface checkOutCartWithId: aCartId creditCard: aCreditCard ]
+		raise: Error
+		withExceptionDo: [ :exception |
+			self assert: exception messageText = CartInterface canNotCheckoutAnEmptyCart ].! !
+
+
 !classDefinition: #CartTest category: #'TDD - TusLibros.com'!
 TestCase subclass: #CartTest
 	instanceVariableNames: 'provider'
@@ -79,7 +303,7 @@ test07CartDoesNotHoldNotAddedItems
 	anItemNotIncludedInTheCart _ provider createAnotherProduct.
 	self deny: (aCart includes: anItemNotIncludedInTheCart).! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:47:57'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:53:59'!
 test08CartRemembersTheNumberOfAddedItems
 	| aCart anItemIncludedInTheCatalog |
 	aCart _ provider createEmptyCart.
@@ -87,7 +311,9 @@ test08CartRemembersTheNumberOfAddedItems
 	aCart
 		addItem: anItemIncludedInTheCatalog
 		quantity: 2.
-	self assert: (aCart quantityOf: anItemIncludedInTheCatalog) = 2.! !
+	self assert: (aCart quantityOf: anItemIncludedInTheCatalog) = 2.
+
+	! !
 
 
 !classDefinition: #CashierTest category: #'TDD - TusLibros.com'!
@@ -102,10 +328,10 @@ debit: aCost from: aCard
 
 	debitBehavior value: aCost value: aCard.! !
 
-!CashierTest methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:35:46'!
+!CashierTest methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 20:56:21'!
 setUp
 	provider _ TestInstancesFactory new.
-	aCashier _ Cashier withMP: self salesBook: OrderedCollection new.! !
+	aCashier _ provider createCashierWithMP: self.! !
 
 !CashierTest methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 18:54:19'!
 test01CanNotCheckoutAnEmptyCart
@@ -259,7 +485,7 @@ initializeWith: aCatalog
 isEmpty
 	^ (self itemsQuantity) = 0.! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'JL 11/1/2017 18:44:57'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:31:55'!
 items
 
 	^items keys.! !
@@ -267,6 +493,11 @@ items
 !Cart methodsFor: 'as yet unclassified' stamp: 'JL 10/26/2017 21:26:34'!
 itemsQuantity
 	^items size.! !
+
+!Cart methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:32:05'!
+itemsWithQuantities
+
+	^items.! !
 
 !Cart methodsFor: 'as yet unclassified' stamp: 'JL 10/30/2017 19:00:05'!
 quantityOf: anItem 
@@ -297,42 +528,140 @@ with: aCatalog
 
 !classDefinition: #CartInterface category: #'TDD - TusLibros.com'!
 Object subclass: #CartInterface
-	instanceVariableNames: 'items catalog'
+	instanceVariableNames: 'users catalog carts lastId cashier'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TDD - TusLibros.com'!
 
-!CartInterface methodsFor: 'as yet unclassified' stamp: 'JL 11/3/2017 20:44:44'!
-addToCartWithId: aCartId bookIsbn: aISBN bookQuantity: aQuantity! !
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:51:03'!
+addToCartWithId: aCartId item: anItem quantity: aQuantity
 
-!CartInterface methodsFor: 'as yet unclassified' stamp: 'JL 11/3/2017 20:41:53'!
-checkOutCartWithId: aCartId cnn: aCcn cced: aCced cco: aCco! !
+	| aCart |
+	aCart := self cartWithId: aCartId.
+	
+	[ aCart addItem: anItem quantity: aQuantity ] 
+		on: Error 
+		do: [ :exception |
+			(exception messageText = Cart itemNotIntoTheCatalogError) ifTrue: [ ^self error: self class itemAbsentInCatalog ].
+			(exception messageText = Cart quantityCanNotBeNegative) ifTrue: [ ^self error: self class invalidQuantity ]
+			].! !
 
-!CartInterface methodsFor: 'as yet unclassified' stamp: 'JL 11/3/2017 20:42:42'!
-createCartForClient: aClientId password: aPassword! !
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:16:55'!
+cartWithId: aCartId
+	^carts at: aCartId ifAbsent: [^self error: CartInterface invalidId]! !
 
-!CartInterface methodsFor: 'as yet unclassified' stamp: 'JL 11/3/2017 20:45:05'!
-listCartWithId: aCartId! !
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:38:44'!
+checkOutCartWithId: aCartId creditCard: aCreditCard
+
+	| aCart today |
+	aCart := self cartWithId: aCartId.
+	today := Date today.
+
+	[ cashier checkout: aCart date: today withCreditCard: aCreditCard ] 
+		on: Error 
+		do: [ :exception |
+			(exception messageText = Cashier canNotCheckoutAnEmptyCart) ifTrue: [ ^self error: self class canNotCheckoutAnEmptyCart ].
+			(exception messageText = Cashier canNotCheckoutWithExpiredCard) ifTrue: [ ^self error: self class canNotCheckoutWithExpiredCard ].
+			(exception messageText = Cashier canNotCheckoutWithStoledCard) ifTrue: [ ^self error: self class canNotCheckoutWithStoledCard ].
+			(exception messageText = Cashier canNotCheckoutWithCardWithoutFounds) ifTrue: [ ^self error: self class canNotCheckoutWithCardWithoutFounds ].
+			].! !
+
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:24:48'!
+createCartForClient: aClientId password: aPassword
+
+	| passwordOfClient aCartId aCart |
+	passwordOfClient := users at: aClientId ifAbsent: [^self error: CartInterface canNotCreateCartWithInvalidUser ].
+	
+	(aPassword ~= passwordOfClient) ifTrue: [^self error: CartInterface canNotCreateCartWithInvalidPassword ].
+	
+	aCartId := self generateCartId.
+	
+	aCart := Cart with: catalog.
+	
+	carts at: aCartId put: aCart.
+
+	^aCartId! !
+
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:24:40'!
+generateCartId
+
+	lastId := lastId + 1.
+	^lastId! !
+
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 20:59:26'!
+initializeWithClients: someClientsWithPasswords 
+	catalog: aCatalog 
+	cashier: aCashier
+
+	users := someClientsWithPasswords.
+	catalog := aCatalog.
+	cashier := aCashier.
+	
+	lastId := 0.
+	carts := Dictionary new.! !
+
+!CartInterface methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 19:32:56'!
+listCartWithId: aCartId
+
+	| aCart |
+	aCart := self cartWithId: aCartId.
+	
+	^aCart itemsWithQuantities! !
 
 !CartInterface methodsFor: 'as yet unclassified' stamp: 'JL 11/3/2017 20:40:19'!
 listPurchasesFor: aClienteId withPassword: aPassword! !
 
-
-!classDefinition: #CartInterfaceTest category: #'TDD - TusLibros.com'!
-Object subclass: #CartInterfaceTest
-	instanceVariableNames: 'provider'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TDD - TusLibros.com'!
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 19:19:48'!
-setUp
-	provider _ TestInstancesFactory new.! !
+!classDefinition: 'CartInterface class' category: #'TDD - TusLibros.com'!
+CartInterface class
+	instanceVariableNames: ''!
 
-!CartInterfaceTest methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 20:59:46'!
-test01createCartWithInvalidUser
-	| authenticationSystem |
-	authenticationSystem login ! !
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:14:21'!
+canNotCheckoutAnEmptyCart
+
+	^'Can not checkout an empty cart'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:39:54'!
+canNotCheckoutWithExpiredCard
+	^'Can not checkout with an expired credit card'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 21:40:53'!
+canNotCheckoutWithStolenCard
+	^'Can not checkout with a stolen credit card'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 16:09:34'!
+canNotCreateCartWithInvalidPassword
+
+	^'Invalid password'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 16:05:11'!
+canNotCreateCartWithInvalidUser
+
+	^'Invalid user'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:16:16'!
+invalidId
+
+	^'Invalid Id'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:48:29'!
+invalidQuantity
+
+	^'Quantity must be positive'! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:42:56'!
+itemAbsentInCatalog
+
+	^'The item is not present into the catalog of the store'.! !
+
+!CartInterface class methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 20:59:46'!
+withClients: someClientsWithPasswords catalog: aCatalog cashier: aCashier
+
+	^self new initializeWithClients: someClientsWithPasswords
+	 	catalog: aCatalog
+		cashier: aCashier	
+! !
 
 
 !classDefinition: #Cashier category: #'TDD - TusLibros.com'!
@@ -448,6 +777,11 @@ Object subclass: #TestInstancesFactory
 createAnotherProduct
 	^'anotherProduct'! !
 
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:43:33'!
+createCartId
+
+	^1! !
+
 !TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:47:26'!
 createCartWithAProduct
 	| aCart |
@@ -472,6 +806,11 @@ createCartWithSomeProducts
 		addItem: oneMoreProduct
 		quantity: 15.
 	^ aCart.! !
+
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 20:55:19'!
+createCashierWithMP: aMerchantProcessor
+
+	^Cashier withMP: aMerchantProcessor salesBook: self createSalesBook.! !
 
 !TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:47:07'!
 createCatalogWithAProduct
@@ -513,6 +852,21 @@ createEmptyCart
 createExpiredCreditCard
 	^CreditCard expiringOn: self yesterday! !
 
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 18:20:54'!
+createInvalidCartId
+
+	^'-1'! !
+
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 16:10:24'!
+createInvalidPassword
+
+	^'password'! !
+
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 17:05:57'!
+createInvalidUserName
+
+	^'invalidUserName'! !
+
 !TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:48:16'!
 createItemAbsentInTheCatalog
 	^ 'anItemAbsentInTheCatalog'.! !
@@ -521,9 +875,34 @@ createItemAbsentInTheCatalog
 createOneMoreProduct
 	^'oneMoreProduct'! !
 
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 15:27:04'!
+createPassword
+
+	^'p@s$w0rD'! !
+
 !TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:47:07'!
 createProduct
 	^ 'aProduct'.! !
+
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 20:54:59'!
+createSalesBook
+	
+	^OrderedCollection new.! !
+
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 17:13:25'!
+createSomeUsers
+
+	| users |
+	users := Dictionary new.
+	users at: 'Carlitos' put: 'p@s$w0rD'.
+	users at: 'Juancito' put: 'p@s$w0rD'.
+	
+	^users.! !
+
+!TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'NL 11/5/2017 17:12:15'!
+createUserName
+
+	^'Carlitos'! !
 
 !TestInstancesFactory methodsFor: 'as yet unclassified' stamp: 'JL 11/4/2017 17:42:10'!
 today
