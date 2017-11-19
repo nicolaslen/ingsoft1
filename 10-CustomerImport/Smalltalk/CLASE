@@ -1,0 +1,16 @@
+" DOs objetos una con la base de datos posta y la otra no.
+PersistentCustomerSystem TransitCustomerSystem que implementan Customer System
+allCustomers..
+ close
+ commit
+ begin
+
+Tenemos que implementar los dos sistemas, y en el test hay que utilizar uno u otro (persistent o el otro)dependiendo del ambiente donde se esta ejecutando no hay que modificar los test, tiene que ser unicamente modificacion
+
+Una clase abstracta Environment con Developer environment y otra Integration environment. Entonces Environment puede crear customerSystem, en el ambiente de desarrollo te devuelve un transitive. E integracion con perisstant. Environment me devuelve current como mensaje de clase, y ambas subclases es itCurrent
+
+LOs tet tendran en el setup elk sytem que le pdira al Environment current createCustomerSystem, despues hjago un system start y luego system beginTransaction. Environment current, ^self allSubclasess
+
+setUp del test se crea un sistema, y al sistema se le asigna una session, pero esto lo deberia hacer el mismo sistema.
+"
+
